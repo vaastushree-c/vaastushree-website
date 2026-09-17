@@ -1,0 +1,2 @@
+const signs=[["♈","Aries"],["♉","Taurus"],["♊","Gemini"],["♋","Cancer"],["♌","Leo"],["♍","Virgo"],["♎","Libra"],["♏","Scorpio"],["♐","Sagittarius"],["♑","Capricorn"],["♒","Aquarius"],["♓","Pisces"]];
+export default function Zodiac(){return <section className="zodiac-strip"><div className="container zodiac-grid">{signs.map(([s,n])=><div className="zodiac-item" key={n}><div className="zodiac-symbol">{s}</div>{n}</div>)}</div></section>}

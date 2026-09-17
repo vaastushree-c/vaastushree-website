@@ -1,0 +1,18 @@
+{
+  "name": "astromystic-website",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev --hostname 0.0.0.0 --port 3000",
+    "build": "next build",
+    "start": "next start"
+  },
+  "dependencies": {
+    "next": "15.5.18",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
+    "lucide-react": "0.516.0",
+    "@supabase/supabase-js": "^2.57.2",
+    "luxon": "3.7.2"
+  }
+}

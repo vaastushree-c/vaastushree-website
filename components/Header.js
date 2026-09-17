@@ -1,0 +1,5 @@
+"use client";
+import {useState} from "react";
+import {Menu,X,Moon} from "lucide-react";
+const links=[["Home","/"],["Services","/services"],["About","/about"],["How It Works","/#how"],["Reviews","/#reviews"],["Property Vastu","/property-consultation"],["Tarot Reading","/book-reading"],["Numerology","/numerology"]];
+export default function Header(){const[open,setOpen]=useState(false);return <header className="header"><div className="container nav"><a className="logo" href="/"><span className="logo-mark"><Moon size={22}/></span>VAASTUSHREE</a><nav className="nav-links">{links.map(([x,y])=><a key={y} href={y}>{x}</a>)}<a className="btn btn-gold small" href="/property-consultation">Book a Consultation</a></nav><button className="menu" onClick={()=>setOpen(!open)} aria-label="Menu">{open?<X/>:<Menu/>}</button></div><nav className={"mobile-nav "+(open?"open":"")}>{links.map(([x,y])=><a key={y} href={y} onClick={()=>setOpen(false)}>{x}</a>)}<a className="btn btn-gold" href="/property-consultation">Book a Consultation</a></nav></header>}
