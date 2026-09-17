@@ -101,5 +101,5 @@ function Field({ label, name, value, onChange, placeholder, type = "text", requi
     const value = sanitizePhone(e.target.value);
     onChange({ target: { name: e.target.name, value } });
   };
-  return <div className="field"><label htmlFor={name}>{label}</label><input id={name} name={name} type={type} value={value} onChange={handleChange} autoComplete={isPhone ? "tel" : undefined} autoCapitalize="none" autoCorrect="off" placeholder={placeholder} required={required} inputMode={isPhone ? "tel" : undefined} pattern={isPhone ? "(?:\\+91)?[6-9]\\d{9}" : undefined} maxLength={isPhone ? 13 : undefined}/></div>;
+  return <div className="field"><label htmlFor={name}>{label}</label><input id={name} name={name} type={type} value={value} onChange={handleChange} autoComplete={isPhone ? "tel" : name === "name" ? "name" : name === "email" ? "email" : "off"} autoCapitalize="none" autoCorrect="off" placeholder={placeholder} required={required} inputMode={isPhone ? "tel" : undefined} pattern={isPhone ? "(?:\\+91)?[6-9]\\d{9}" : undefined} maxLength={isPhone ? 13 : undefined}/></div>;
 }

@@ -205,7 +205,7 @@ function Field({ label, name, value, onChange, placeholder, type = "text", requi
         type={type}
         value={value}
         onChange={handleChange}
-        autoComplete={isPhone ? "tel" : undefined}
+        autoComplete={isPhone ? "tel" : name === "name" ? "name" : name === "email" ? "email" : "off"}
         autoCapitalize="none"
         autoCorrect="off"
         placeholder={placeholder}
