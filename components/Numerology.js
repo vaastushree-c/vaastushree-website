@@ -80,16 +80,19 @@ export default function Numerology(){
 }
 function Benefit({icon:Icon,title,text}){return <article className="numerology-benefit card"><div className="numerology-benefit-icon"><Icon size={21}/></div><h3>{title}</h3><p>{text}</p></article>}
 function sanitizePhone(value) {
- let cleaned=String(value||"").replace(/[^\d+]/g,"");
- if(cleaned.startsWith("+91")) return "+91"+cleaned.slice(3).replace(/\D/g,"").slice(0,10);
- if(cleaned.startsWith("+")) return "+"+cleaned.slice(1).replace(/\D/g,"").slice(0,12);
- return cleaned.replace(/\D/g,"").slice(0,10);
+ const raw=String(value||"");
+ const hasPlus=raw.trimStart().startsWith("+");
+ const digits=raw.replace(/\D/g,"");
+ if(digits.startsWith("91") && digits.length>10) return "+91"+digits.slice(2,12);
+ if(hasPlus) return "+"+digits.slice(0,12);
+ return digits.slice(0,10);
 }
 function Field({label,name,value,onChange,placeholder,type="text",required=false,max}){
  const isPhone=name==="phone";
  const handleChange=(e)=>{
   if(!isPhone) return onChange(e);
-  onChange({...e,target:{...e.target,value:sanitizePhone(e.target.value)}});
+  const value=sanitizePhone(e.target.value);
+  onChange({target:{name:e.target.name,value}});
  };
- return <div className="field"><label htmlFor={name}>{label}</label><input id={name} name={name} type={type} value={value} onChange={handleChange} placeholder={placeholder} required={required} max={max} inputMode={isPhone?"tel":undefined} pattern={isPhone?"(?:\\+91)?[6-9]\\d{9}":undefined} maxLength={isPhone?13:undefined}/></div>
+ return <div className="field"><label htmlFor={name}>{label}</label><input id={name} name={name} type={type} value={value} onChange={handleChange} autoComplete={isPhone?"tel":undefined} autoCapitalize="none" autoCorrect="off" placeholder={placeholder} required={required} max={max} inputMode={isPhone?"tel":undefined} pattern={isPhone?"(?:\\+91)?[6-9]\\d{9}":undefined} maxLength={isPhone?13:undefined}/></div>
 }

@@ -181,17 +181,20 @@ export default function PropertyConsultation() {
 }
 
 function sanitizePhone(value) {
-  let cleaned = String(value || "").replace(/[^\d+]/g, "");
-  if (cleaned.startsWith("+91")) return "+91" + cleaned.slice(3).replace(/\D/g, "").slice(0, 10);
-  if (cleaned.startsWith("+")) return "+" + cleaned.slice(1).replace(/\D/g, "").slice(0, 12);
-  return cleaned.replace(/\D/g, "").slice(0, 10);
+  const raw = String(value || "");
+  const hasPlus = raw.trimStart().startsWith("+");
+  const digits = raw.replace(/\D/g, "");
+  if (digits.startsWith("91") && digits.length > 10) return "+91" + digits.slice(2, 12);
+  if (hasPlus) return "+" + digits.slice(0, 12);
+  return digits.slice(0, 10);
 }
 
 function Field({ label, name, value, onChange, placeholder, type = "text", required = false }) {
   const isPhone = name === "phone";
   const handleChange = (e) => {
     if (!isPhone) return onChange(e);
-    onChange({ ...e, target: { ...e.target, value: sanitizePhone(e.target.value) } });
+    const value = sanitizePhone(e.target.value);
+    onChange({ target: { name: e.target.name, value } });
   };
   return (
     <div className="field">
@@ -202,6 +205,9 @@ function Field({ label, name, value, onChange, placeholder, type = "text", requi
         type={type}
         value={value}
         onChange={handleChange}
+        autoComplete={isPhone ? "tel" : undefined}
+        autoCapitalize="none"
+        autoCorrect="off"
         placeholder={placeholder}
         required={required}
         inputMode={isPhone ? "tel" : undefined}

@@ -67,19 +67,22 @@ export default function Booking() {
 }
 
 function sanitizePhone(value) {
-  let cleaned = String(value || "").replace(/[^\d+]/g, "");
-  if (cleaned.startsWith("+91")) return "+91" + cleaned.slice(3).replace(/\D/g, "").slice(0, 10);
-  if (cleaned.startsWith("+")) return "+" + cleaned.slice(1).replace(/\D/g, "").slice(0, 12);
-  return cleaned.replace(/\D/g, "").slice(0, 10);
+  const raw = String(value || "");
+  const hasPlus = raw.trimStart().startsWith("+");
+  const digits = raw.replace(/\D/g, "");
+  if (digits.startsWith("91") && digits.length > 10) return "+91" + digits.slice(2, 12);
+  if (hasPlus) return "+" + digits.slice(0, 12);
+  return digits.slice(0, 10);
 }
 
 function Field({ l, n, v, u, p, r, t="text" }) {
   const isPhone = n === "phone";
   const handleChange = (e) => {
     if (!isPhone) return u(e);
-    u({ ...e, target: { ...e.target, value: sanitizePhone(e.target.value) } });
+    const value = sanitizePhone(e.target.value);
+    u({ target: { name: e.target.name, value } });
   };
-  return <div className="field"><label htmlFor={n}>{l}</label><input id={n} name={n} type={t} value={v} onChange={handleChange} placeholder={p} required={r} inputMode={isPhone ? "tel" : undefined} pattern={isPhone ? "(?:\\+91)?[6-9]\\d{9}" : undefined} maxLength={isPhone ? 13 : undefined} /></div>;
+  return <div className="field"><label htmlFor={n}>{l}</label><input id={n} name={n} type={t} value={v} onChange={handleChange} autoComplete={isPhone ? "tel" : undefined} autoCapitalize="none" autoCorrect="off" placeholder={p} required={r} inputMode={isPhone ? "tel" : undefined} pattern={isPhone ? "(?:\\+91)?[6-9]\\d{9}" : undefined} maxLength={isPhone ? 13 : undefined} /></div>;
 }
 function formatTime(value) { const [h,m]=value.split(":").map(Number); const d=new Date(); d.setHours(h,m); return d.toLocaleTimeString("en-IN",{hour:"numeric",minute:"2-digit"}); }
 function formatDate(value) { return new Date(`${value}T12:00:00`).toLocaleDateString("en-IN",{day:"numeric",month:"short",year:"numeric"}); }
