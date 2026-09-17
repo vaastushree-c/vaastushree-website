@@ -180,7 +180,19 @@ export default function PropertyConsultation() {
   );
 }
 
+function sanitizePhone(value) {
+  let cleaned = String(value || "").replace(/[^\d+]/g, "");
+  if (cleaned.startsWith("+91")) return "+91" + cleaned.slice(3).replace(/\D/g, "").slice(0, 10);
+  if (cleaned.startsWith("+")) return "+" + cleaned.slice(1).replace(/\D/g, "").slice(0, 12);
+  return cleaned.replace(/\D/g, "").slice(0, 10);
+}
+
 function Field({ label, name, value, onChange, placeholder, type = "text", required = false }) {
+  const isPhone = name === "phone";
+  const handleChange = (e) => {
+    if (!isPhone) return onChange(e);
+    onChange({ ...e, target: { ...e.target, value: sanitizePhone(e.target.value) } });
+  };
   return (
     <div className="field">
       <label htmlFor={name}>{label}</label>
@@ -189,9 +201,12 @@ function Field({ label, name, value, onChange, placeholder, type = "text", requi
         name={name}
         type={type}
         value={value}
-        onChange={onChange}
+        onChange={handleChange}
         placeholder={placeholder}
         required={required}
+        inputMode={isPhone ? "tel" : undefined}
+        pattern={isPhone ? "(?:\\+91)?[6-9]\\d{9}" : undefined}
+        maxLength={isPhone ? 13 : undefined}
       />
     </div>
   );

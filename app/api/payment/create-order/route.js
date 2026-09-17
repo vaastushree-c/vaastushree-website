@@ -21,6 +21,8 @@ export async function POST(request) {
     const amount = Math.round(Number(amountInRupees) * 100);
     if (!Number.isFinite(amount) || amount <= 0) return NextResponse.json({ error: "Invalid service price." }, { status: 500 });
     if (!booking?.date || !booking?.time) return NextResponse.json({ error: "Please choose an appointment date and time." }, { status: 400 });
+    const phone = String(booking?.phone || "").replace(/\s+/g, "");
+    if (!/^(?:\+91)?[6-9]\d{9}$/.test(phone)) return NextResponse.json({ error: "Please enter a valid Indian phone number." }, { status: 400 });
 
     const available = (await getAvailableSlots(booking.date, generateSlots)).some((slot) => slot.start === booking.time);
     if (!available) return NextResponse.json({ error: "That appointment slot is no longer available. Please choose another time." }, { status: 409 });
