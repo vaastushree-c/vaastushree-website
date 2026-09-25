@@ -5,6 +5,8 @@ import {ArrowRight, Hash, Compass, BriefcaseBusiness, Heart, Sparkles, CreditCar
 import { startRazorpayPayment } from "../lib/razorpay";
 import AppointmentPicker from "./AppointmentPicker";
 
+const CONSULTATION_FEE=999;
+
 
 export default function Numerology(){
  const [form,setForm]=useState({name:"",phone:"",email:"",date:"",appointmentDate:"",time:"",question:""});
@@ -70,7 +72,7 @@ export default function Numerology(){
         <Field label="Date of Birth" name="date" value={form.date} onChange={update} type="date" max={new Date().toISOString().split("T")[0]}/>
         <AppointmentPicker date={form.appointmentDate || ""} time={form.time} onChange={(next)=>setForm(current=>({...current, appointmentDate: next.date ?? current.appointmentDate, time: next.time ?? current.time}))}/>
         <div className="field full"><label htmlFor="question">What would you like guidance on?</label><textarea id="question" name="question" value={form.question} onChange={update} placeholder="Optional — career, relationships, life direction, personal growth, or another area."/></div>
-        <button className="btn btn-gold booking-submit full" type="submit"><CreditCard size={18}/> Pay & Confirm Appointment</button>
+        <button className="btn btn-gold booking-submit full" type="submit"><CreditCard size={18}/> Pay ₹{CONSULTATION_FEE.toLocaleString("en-IN")} & Confirm Appointment</button>
         {status && <p className="booking-status full" role="status">{status}</p>}
        </div>
       </form>

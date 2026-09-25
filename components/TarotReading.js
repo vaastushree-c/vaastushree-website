@@ -5,6 +5,8 @@ import { ArrowRight, Check, Heart, Compass, Sparkles, CreditCard } from "lucide-
 import { startRazorpayPayment } from "../lib/razorpay";
 import AppointmentPicker from "./AppointmentPicker";
 
+const CONSULTATION_FEE = 999;
+
 export default function TarotReading() {
   const [form, setForm] = useState({ name: "", phone: "", email: "", date: "", time: "", question: "" });
   const [status, setStatus] = useState("");
@@ -71,7 +73,7 @@ export default function TarotReading() {
                 <label htmlFor="question">What would you like guidance on?</label>
                 <textarea id="question" name="question" value={form.question} onChange={update} placeholder="Optional — relationship, career, decision, personal growth, or another question." />
               </div>
-              <button className="btn btn-gold booking-submit full" type="submit"><CreditCard size={18}/> Pay & Confirm Appointment</button>
+              <button className="btn btn-gold booking-submit full" type="submit"><CreditCard size={18}/> Pay ₹{CONSULTATION_FEE.toLocaleString("en-IN")} & Confirm Appointment</button>
               {status && <p className="booking-status full" role="status">{status}</p>}
             </div>
           </form>

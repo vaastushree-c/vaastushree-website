@@ -32,9 +32,40 @@ export default function AppointmentPicker({ date, time, onChange }) {
       setLoading(true);
       setError("");
       try {
-        const response = await fetch(`/api/calendar/availability?date=${encodeURIComponent(date)}`, { cache: "no-store" });
-        const result = await response.json();
-        if (!response.ok) throw new Error(result.error || "Unable to load available times.");
+        let result = null;
+        let lastError = null;
+
+        // Availability can occasionally fail because of a transient auth/session
+        // response from the backend. Retry those failures automatically so the
+        // customer does not have to change the date and select it again.
+        for (let attempt = 0; attempt < 3; attempt += 1) {
+          try {
+            const response = await fetch(`/api/calendar/availability?date=${encodeURIComponent(date)}`, {
+              cache: "no-store",
+              headers: { Accept: "application/json" },
+            });
+            const data = await response.json().catch(() => ({}));
+
+            if (response.ok) {
+              result = data;
+              break;
+            }
+
+            const message = String(data?.error || "");
+            const transientAuthError = response.status === 401 || response.status === 403 || /jwt|token|auth|session/i.test(message);
+            lastError = new Error(transientAuthError ? "Temporary availability error" : (message || "Unable to load available times."));
+
+            if (!transientAuthError || attempt === 2) break;
+            await new Promise((resolve) => setTimeout(resolve, 350 * (attempt + 1)));
+          } catch (fetchError) {
+            lastError = fetchError;
+            if (attempt === 2) break;
+            await new Promise((resolve) => setTimeout(resolve, 350 * (attempt + 1)));
+          }
+        }
+
+        if (!result) throw lastError || new Error("Unable to load available times.");
+
         if (!cancelled) {
           setSlots(result.slots || []);
           if (time && !(result.slots || []).some((slot) => slot.start === time)) onChange({ time: "" });
@@ -42,7 +73,8 @@ export default function AppointmentPicker({ date, time, onChange }) {
       } catch (err) {
         if (!cancelled) {
           setSlots([]);
-          setError(err.message || "Unable to load available times.");
+          // Never expose internal JWT/auth details to customers.
+          setError("Unable to load available times right now. Please try again.");
         }
       } finally {
         if (!cancelled) setLoading(false);

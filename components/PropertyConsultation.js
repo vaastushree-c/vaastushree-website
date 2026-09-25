@@ -6,6 +6,7 @@ import { useState } from "react";
 import AppointmentPicker from "./AppointmentPicker";
 
 const WHATSAPP_NUMBER = "9199937656959";
+const CONSULTATION_FEE = 1499;
 
 const types = [
   {
@@ -165,7 +166,7 @@ export default function PropertyConsultation() {
 
             <button className="btn btn-gold booking-submit full" disabled={status.includes("Creating secure payment") || status.includes("Verifying payment")} type="submit">
               {status === "Creating secure payment..." || status === "Verifying payment..." ? <Loader2 size={19} className="spin" /> : <CreditCard size={19} />}
-              {status.includes("Creating secure payment") || status.includes("Verifying payment") ? status : "Pay & Confirm Appointment"}
+              {status.includes("Creating secure payment") || status.includes("Verifying payment") ? status : `Pay ₹${CONSULTATION_FEE.toLocaleString("en-IN")} & Confirm Appointment`}
             </button>
             {status && <p className="booking-status full" role="status">{status}</p>}
           </div>

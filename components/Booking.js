@@ -6,6 +6,11 @@ import { startRazorpayPayment } from "../lib/razorpay";
 import AppointmentPicker from "./AppointmentPicker";
 
 const SERVICES = ["Vastu Property Consultation", "Tarot Reading", "Numerology Consultation"];
+const SERVICE_FEES = {
+  "Vastu Property Consultation": 1499,
+  "Tarot Reading": 999,
+  "Numerology Consultation": 999,
+};
 
 export default function Booking() {
   const [form, setForm] = useState({ name:"", phone:"", email:"", reading:SERVICES[0], date:"", time:"", question:"" });
@@ -52,10 +57,17 @@ export default function Booking() {
               <label htmlFor="question">Property / Consultation Details</label>
               <textarea id="question" name="question" value={form.question} onChange={update} placeholder="Optional — tell us about the property or what you would like the consultation to cover." />
             </div>
-            {form.date && form.time && <div className="booking-summary full"><strong>Selected:</strong> {formatDate(form.date)} at {formatTime(form.time)} · {form.reading}</div>}
+            {form.date && form.time && (
+              <div className="booking-summary full">
+                <div><strong>Selected:</strong> {formatDate(form.date)} at {formatTime(form.time)}</div>
+                <div><strong>Service:</strong> {form.reading}</div>
+                <div><strong>Consultation fee:</strong> ₹{SERVICE_FEES[form.reading].toLocaleString("en-IN")}</div>
+                <div className="booking-fee-note">No payment is taken until you click the button below.</div>
+              </div>
+            )}
             <button className="btn btn-gold booking-submit full" disabled={busy} type="submit">
               {busy ? <Loader2 size={18} className="spin" /> : <CreditCard size={18} />}
-              {busy ? status : "Pay & Confirm Appointment"}
+              {busy ? status : `Pay ₹${SERVICE_FEES[form.reading].toLocaleString("en-IN")} & Confirm Appointment`}
             </button>
           </div>
           <div className="booking-payment-note"><ShieldCheck size={16} /><span>Secure payment via Razorpay. The server verifies your payment and confirms the appointment.</span></div>
